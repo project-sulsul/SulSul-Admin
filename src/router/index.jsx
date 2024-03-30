@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
+import UserPage from "../pages/UserPage";
 
 const router = createBrowserRouter([
   {
@@ -8,7 +9,12 @@ const router = createBrowserRouter([
       <LoginPage />
     ),
   },
-  // TODO: 페이지 추가
+  {
+    path: "/user",
+    element: (
+      <UserPage />
+    ),
+  },
 ]);
 
 export default router;

@@ -8,6 +8,12 @@ const router = createBrowserRouter([
       <LoginPage />
     ),
   },
+  {
+    path: "/report",
+    element: (
+      <div></div>
+    ),
+  },
   // TODO: 페이지 추가
 ]);
 

@@ -11,13 +11,13 @@ export default function LoginPage() {
 
   const nav = useNavigate();
 
-  const id = useRef();
-  const pw = useRef();
+  const idRef = useRef();
+  const pwRef = useRef();
 
   const onClickLogin = async () => {
     sulApi.post(`/admin/sign-in`, {
-      username: id.current.value,
-      password: pw.current.value,
+      username: idRef.current.value,
+      password: pwRef.current.value,
     })
       .then(data => {
         document.cookie = `access_token=${data.access_token}`;
@@ -30,11 +30,12 @@ export default function LoginPage() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", justifyContent: "center", alignItems: 'center' }}>
-      <Paper elevation={5} sx={{p: 3, width: "50%"}}>
+      <Paper elevation={5} sx={{p: 3, widRefth: "50%"}}>
         <h1>SULSUL Admin</h1>
+        
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <TextField required inputRef={id} label="ID" variant="outlined" />
-          <TextField required type="password" inputRef={pw} label="PW" variant="outlined" />
+          <TextField required inputRef={idRef} label="idRef" variant="outlined" />
+          <TextField required type="password" inputRef={pwRef} label="PW" variant="outlined" />
           <Button variant="contained" onClick={onClickLogin}>Login</Button>
         </Box>
       </Paper>

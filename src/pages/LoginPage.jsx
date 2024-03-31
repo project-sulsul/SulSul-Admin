@@ -34,7 +34,7 @@ export default function LoginPage() {
         <h1>SULSUL Admin</h1>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <TextField required inputRef={idRef} label="idRef" variant="outlined" />
+          <TextField required inputRef={idRef} label="ID" variant="outlined" />
           <TextField required type="password" inputRef={pwRef} label="PW" variant="outlined" />
           <Button variant="contained" onClick={onClickLogin}>Login</Button>
         </Box>

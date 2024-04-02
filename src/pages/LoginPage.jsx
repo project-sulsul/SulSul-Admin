@@ -20,7 +20,7 @@ export default function LoginPage() {
       password: pwRef.current.value,
     })
       .then(data => {
-        document.cookie = `access_token=${data.access_token}`;
+        document.cookie = `access_token=${data.data.access_token}`;
         nav("/report")
       })
       .catch(err => {

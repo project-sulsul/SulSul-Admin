@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { getAllUserList, updateUserStatus } from "../api/user";
 
@@ -18,8 +18,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { commonStore } from "../stores";
 
 export default function UserPage() {
+  const [_, setState] = useContext(commonStore);
+
   const [userList, setUserList] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -68,20 +71,21 @@ export default function UserPage() {
   };
 
   const onChangeUserStatus = (e) => {
-    const { value } = e.target;
+    setState(prev => ({ ...prev, isModalOpen: true }));
+    // const { value } = e.target;
 
-    const params = {
-      user_ids: selected,
-      status: value,
-    };
+    // const params = {
+    //   user_ids: selected,
+    //   status: value,
+    // };
 
-    updateUserStatus(params)
-      .then(() => {
-        getUserList();
-      })
-      .catch(e => {
-        console.error(e);
-      });
+    // updateUserStatus(params)
+    //   .then(() => {
+    //     getUserList();
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //   });
   };
 
   return (

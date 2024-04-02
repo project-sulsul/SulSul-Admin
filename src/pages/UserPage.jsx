@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { getAllUserList, updateUserStatus } from "../api/user";
+
 import {
   Button,
   ButtonGroup,
@@ -41,7 +43,15 @@ export default function UserPage() {
   }, []);
 
   function getUserList() {
+    getAllUserList()
+      .then(res => {
+        console.log('getUserList', res);
+        // setUserList(res);
 
+      })
+      .catch(e => {
+        console.error(e);
+      });
   }
 
   const onChangePage = (e, newPage) => {
@@ -65,7 +75,13 @@ export default function UserPage() {
       status: value,
     };
 
-
+    updateUserStatus(params)
+      .then(() => {
+        getUserList();
+      })
+      .catch(e => {
+        console.error(e);
+      });
   };
 
   return (

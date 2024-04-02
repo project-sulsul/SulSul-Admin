@@ -15,6 +15,12 @@ const router = createBrowserRouter([
       <UserPage />
     ),
   },
+  {
+    path: "/report",
+    element: (
+      <div></div>
+    ),
+  },
 ]);
 
 export default router;

@@ -20,14 +20,14 @@ export default function LoginPage() {
       password: pwRef.current.value,
     })
       .then(data => {
-        document.cookie = `access_token=${data.data.access_token}`;
+        localStorage.setItem("auth", `${data.data.token_type} ${data.data.access_token}`);
         nav("/report")
       })
       .catch(err => {
         console.error(err)
       })
   }
-
+  
   return (
     <Box sx={{ display: "flex", height: "100vh", justifyContent: "center", alignItems: 'center' }}>
       <Paper elevation={5} sx={{p: 3, width: "50%"}}>

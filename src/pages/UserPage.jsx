@@ -1,12 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getAllUserList, updateUserStatus } from "../api/user";
 
 import {
+  Box,
   Button,
   ButtonGroup,
   Checkbox,
   Container,
+  Modal,
   Paper,
   Stack,
   Table,
@@ -18,15 +20,15 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { commonStore } from "../stores";
+import { USER_STATUS } from "../constants";
+import CheckModal from "../components/CheckModal";
 
 export default function UserPage() {
-  const [_, setState] = useContext(commonStore);
-
   const [userList, setUserList] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selected, setSelected] = useState([]);
+  const [mode, setMode] = useState(null);
 
   useEffect(() => {
     getUserList();
@@ -70,22 +72,29 @@ export default function UserPage() {
     setSelected(prev => [...prev, Number(e.target.value)]);
   };
 
+  const openModal = (status) => {
+    setMode(status);
+  };
+
+  const closeModal = () => {
+    setMode(null);
+  };
+
   const onChangeUserStatus = (e) => {
-    setState(prev => ({ ...prev, isModalOpen: true }));
-    // const { value } = e.target;
+    const status = mode === USER_STATUS.ACTIVE ? 'active' : 'banned';
 
-    // const params = {
-    //   user_ids: selected,
-    //   status: value,
-    // };
+    const params = {
+      user_ids: selected,
+      status: status,
+    };
 
-    // updateUserStatus(params)
-    //   .then(() => {
-    //     getUserList();
-    //   })
-    //   .catch(e => {
-    //     console.error(e);
-    //   });
+    updateUserStatus(params)
+      .then(() => {
+        getUserList();
+      })
+      .catch(e => {
+        console.error(e);
+      });
   };
 
   return (
@@ -101,8 +110,8 @@ export default function UserPage() {
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>유저 정보</Typography>
 
         <ButtonGroup variant="contained">
-          <Button color="error" value="banned" onClick={onChangeUserStatus}>영구 정지</Button>
-          <Button value="active" onClick={onChangeUserStatus}>정지 해제</Button>
+          <Button color="error" value="banned" onClick={() => openModal(USER_STATUS.INACTIVE)}>영구 정지</Button>
+          <Button value="active" onClick={() => openModal(USER_STATUS.ACTIVE)}>정지 해제</Button>
         </ButtonGroup>
       </Stack>
 
@@ -153,6 +162,17 @@ export default function UserPage() {
           onRowsPerPageChange={onChangeRowsPerPage}
         />
       </Paper>
+
+      <CheckModal
+        open={mode === USER_STATUS.ACTIVE || mode === USER_STATUS.INACTIVE}
+        status={mode}
+        title={mode}
+        content={`선택한 사용자의 권한을 ${mode}하시겠습니까?`}
+        onClick={onChangeUserStatus}
+        onClose={closeModal}
+      />
+
     </Container>
   );
 }
+

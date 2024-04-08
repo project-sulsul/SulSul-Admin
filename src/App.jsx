@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import UserPage from './pages/UserPage';
 import ReportPage from './pages/ReportPage';
 import FeedPage from './pages/FeedPage';
+import FeedDetailPage from './pages/FeedDetailPage';
 
 export default function App() {
 
@@ -12,10 +13,16 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<LoginPage />} />
+
         <Route element={<Layout />}>
           <Route path='/report' element={<ReportPage />} />
+
           <Route path='/user' element={<UserPage />} />
-          <Route path='/feed' element={<FeedPage />} />
+
+          <Route path='/feed'>
+            <Route index element={<FeedPage />} />
+            <Route path=':id' element={<FeedDetailPage />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

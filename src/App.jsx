@@ -21,7 +21,7 @@ export default function App() {
 
           <Route path='/feed'>
             <Route index element={<FeedPage />} />
-            <Route path=':id' element={<FeedDetailPage />} />
+            <Route path=':feedId' element={<FeedDetailPage />} />
           </Route>
         </Route>
       </Routes>

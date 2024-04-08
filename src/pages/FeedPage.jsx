@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { getAllFeedList } from "../api/feed";
 
@@ -17,7 +18,6 @@ import {
   Typography
 } from "@mui/material";
 import SelectModal from "../components/modal/SelectModal";
-import { useNavigate } from "react-router-dom";
 
 export default function FeedPage() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function FeedPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [total, setTotal] = useState(0);
-  const [mode, setMode] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getFeedList();
@@ -57,11 +57,11 @@ export default function FeedPage() {
 
   const openModal = (e) => {
     e.stopPropagation();
-    setMode(true);
+    setOpen(true);
   };
 
   const closeModal = () => {
-    setMode(false);
+    setOpen(false);
   };
 
   const onClickFeed = (id) => {
@@ -155,7 +155,7 @@ export default function FeedPage() {
       </Paper>
 
       <SelectModal
-        open={mode}
+        open={open}
         title={'게시글을 삭제합니다.'}
         content={'삭제하시겠습니까?'}
         leftButtonName={'영구삭제'}

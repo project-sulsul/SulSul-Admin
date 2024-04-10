@@ -53,13 +53,16 @@ export default function FeedPage() {
     setPage(0);
   };
 
-  const onDelete = ({ isHardDelete }) => {
+  const onDelete = (isHardDelete = false) => {
     deleteFeed({ feedId: selected?.feed_id, isHardDelete })
       .then(() => {
         closeModal();
         navigate('/feed');
       })
-      .catch(console.error);
+      .catch((e) => {
+        alert('오류가 발생했습니다. 다시 시도해 주세요.');
+        console.error(e);
+      });
   };
 
   const openModal = (e, feed) => {
@@ -106,7 +109,6 @@ export default function FeedPage() {
                 <HeadCell width={'5%'}>
                   유저
                 </HeadCell>
-                {/* <HeadCell sx={{ fontWeight: 'bold', width: '10%', padding: 1 }}>닉네임</HeadCell> */}
                 <HeadCell width={'7%'}>
                   신고
                 </HeadCell>
@@ -136,9 +138,8 @@ export default function FeedPage() {
                   <BodyCell >{feed.title ?? '-'}</BodyCell>
                   <BodyCell >{feed.content ?? '-'}</BodyCell>
                   <BodyCell >{feed.user_id ?? '-'}</BodyCell>
-                  {/* <BodyCell >{feed.nickname ?? '-'}</BodyCell> */}
-                  <BodyCell color={feed.is_reported ? 'green' : '#cc0000'}>{String(feed?.is_reported).toUpperCase() ?? '-'}</BodyCell>
-                  <BodyCell color={feed.is_deleted ? 'green' : '#cc0000'}>{String(feed?.is_deleted).toUpperCase() ?? '-'}</BodyCell>
+                  <BodyCell color={feed.is_reported ? '#cc0000' : 'green'}>{feed?.is_reported ? String(feed?.is_reported).toUpperCase() : '-'}</BodyCell>
+                  <BodyCell color={feed.is_deleted ? '#cc0000' : 'green'}>{feed?.is_deleted ? String(feed?.is_deleted).toUpperCase() : '-'}</BodyCell>
                   <BodyCell >{(feed.created_at) ?? '-'}</BodyCell>
                   <BodyCell >{(feed.updated_at) ?? '-'}</BodyCell>
 
@@ -168,11 +169,11 @@ export default function FeedPage() {
         content={selected?.is_deleted ? '영구 삭제하시겠습니까?' : '삭제하시겠습니까?'}
         leftButtonName={'영구삭제'}
         rightButtonName={selected?.is_deleted ? '닫기' : '임시삭제'}
-        onClickLeftButton={() => onDelete({ isHardDelete: true })}
+        onClickLeftButton={() => onDelete(true)}
         onClickRightButton={
           selected?.is_deleted ?
             closeModal :
-            () => onDelete({ isHardDelete: false })
+            onDelete
         }
         onClose={closeModal}
       />

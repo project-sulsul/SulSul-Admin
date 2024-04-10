@@ -52,7 +52,10 @@ export default function FeedDetailPage() {
         closeModal();
         navigate('/feed');
       })
-      .catch(console.error);
+      .catch((e) => {
+        alert('오류가 발생했습니다. 다시 시도해 주세요.');
+        console.error(e);
+      });
   };
 
   return (
@@ -122,19 +125,19 @@ export default function FeedDetailPage() {
 
           <HeadGridItem xs={2}>삭제 여부</HeadGridItem>
           <BodyGridItem color={detailData?.is_deleted ? '#cc0000' : 'green'} xs={4}>
-            {detailData?.is_deleted ? String(detailData?.is_deleted).toUpperCase() : '-'}
+            {detailData?.is_deleted ? 'TRUE' : 'FALSE'}
           </BodyGridItem>
         </Grid>
       </Paper>
 
       <SelectModal
         open={open}
-        title={'게시글을 삭제합니다.'}
-        content={'삭제하시겠습니까?'}
+        title={detailData?.is_deleted ? '삭제된 게시글입니다.' : '게시글을 삭제합니다.'}
+        content={detailData?.is_deleted ? '영구 삭제하시겠습니까?' : '삭제하시겠습니까?'}
         leftButtonName={'영구삭제'}
-        rightButtonName={'임시삭제'}
+        rightButtonName={detailData?.is_deleted ? '닫기' : '임시삭제'}
         onClickLeftButton={() => onDelete(true)}
-        onClickRightButton={onDelete}
+        onClickRightButton={detailData?.is_deleted ? closeModal : onDelete}
         onClose={closeModal}
       />
     </Container >

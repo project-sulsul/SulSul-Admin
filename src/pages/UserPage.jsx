@@ -21,7 +21,7 @@ import {
   Typography,
 } from "@mui/material";
 import { USER_STATUS } from "../constants";
-import CheckModal from "../components/CheckModal";
+import CheckModal from "../components/modal/CheckModal";
 
 export default function UserPage() {
   const [userList, setUserList] = useState([]);

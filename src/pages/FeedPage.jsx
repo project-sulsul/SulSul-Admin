@@ -20,7 +20,7 @@ import {
 import SelectModal from "../components/modal/SelectModal";
 import { dateTimeFormat } from "../utils/dateTimeFormat";
 
-export default function FeedPage() {
+export default function FeedPage({ setIsLoading }) {
   const navigate = useNavigate();
 
   const [feedList, setFeedList] = useState([]);
@@ -35,6 +35,7 @@ export default function FeedPage() {
   }, [page, rowsPerPage]);
 
   function getFeedList() {
+    setIsLoading(true);
     getAllFeedList({ page: page + 1, size: rowsPerPage })
       .then(res => {
         setFeedList(res.content);
@@ -42,7 +43,8 @@ export default function FeedPage() {
       })
       .catch(e => {
         console.error(e);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }
 
   const onChangePage = (e, newPage) => {
@@ -55,6 +57,7 @@ export default function FeedPage() {
   };
 
   const onDelete = (isHardDelete = false) => {
+    setIsLoading(true);
     deleteFeed({ feedId: selected?.feed_id, isHardDelete })
       .then(() => {
         closeModal();
@@ -63,7 +66,8 @@ export default function FeedPage() {
       .catch((e) => {
         alert('오류가 발생했습니다. 다시 시도해 주세요.');
         console.error(e);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const openModal = (e, feed) => {

@@ -1,6 +1,6 @@
 import { Container, Stack, Typography, Paper } from "@mui/material";
 
-export default function ReportPage() {
+export default function ReportPage({ setIsLoading }) {
   return (
     <Container>
       <Stack

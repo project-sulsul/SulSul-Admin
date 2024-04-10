@@ -22,7 +22,7 @@ import { USER_STATUS } from "../constants";
 import CheckModal from "../components/modal/CheckModal";
 import { dateTimeFormat } from "../utils/dateTimeFormat";
 
-export default function UserPage() {
+export default function UserPage({ setIsLoading }) {
   const [userList, setUserList] = useState([]);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -35,6 +35,7 @@ export default function UserPage() {
   }, [page, rowsPerPage]);
 
   function getUserList() {
+    setIsLoading(true);
     getAllUserList({ page: page + 1, size: rowsPerPage })
       .then(res => {
         console.log('getUserList', res.content);
@@ -43,7 +44,8 @@ export default function UserPage() {
       })
       .catch(e => {
         console.error(e);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }
 
   const onChangePage = (e, newPage) => {
@@ -91,6 +93,7 @@ export default function UserPage() {
       status: status,
     };
 
+    setIsLoading(true);
     updateUserStatus(params)
       .then(() => {
         getUserList();
@@ -99,7 +102,8 @@ export default function UserPage() {
       .catch(e => {
         alert('오류가 발생했습니다. 다시 시도해 주세요.');
         console.error(e);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (

@@ -21,7 +21,7 @@ import { deleteFeed, getFeedById } from "../api/feed";
 import SelectModal from "../components/modal/SelectModal";
 import { dateTimeFormat } from "../utils/dateTimeFormat";
 
-export default function FeedDetailPage() {
+export default function FeedDetailPage({ setIsLoading }) {
   const navigate = useNavigate();
   const { feedId } = useParams();
 
@@ -33,9 +33,11 @@ export default function FeedDetailPage() {
   }, [feedId]);
 
   function getFeedDetailById() {
+    setIsLoading(true);
     getFeedById({ feedId })
       .then(setDetailData)
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }
 
   const openModal = (e) => {
@@ -48,6 +50,7 @@ export default function FeedDetailPage() {
   };
 
   const onDelete = (isHardDelete = false) => {
+    setIsLoading(true);
     deleteFeed({ feedId, isHardDelete })
       .then(() => {
         closeModal();
@@ -56,7 +59,8 @@ export default function FeedDetailPage() {
       .catch((e) => {
         alert('오류가 발생했습니다. 다시 시도해 주세요.');
         console.error(e);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (

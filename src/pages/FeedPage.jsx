@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getAllFeedList } from "../api/feed";
+import { deleteFeed, getAllFeedList } from "../api/feed";
 
 import {
   Button,
@@ -27,6 +27,7 @@ export default function FeedPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState();
 
   useEffect(() => {
     getFeedList();
@@ -52,12 +53,19 @@ export default function FeedPage() {
     setPage(0);
   };
 
-  const onDelete = (e) => {
+  const onDelete = ({ isHardDelete }) => {
+    deleteFeed({ feedId: selected?.feed_id, isHardDelete })
+      .then(() => {
+        closeModal();
+        navigate('/feed');
+      })
+      .catch(console.error);
   };
 
-  const openModal = (e) => {
+  const openModal = (e, feed) => {
     e.stopPropagation();
     setOpen(true);
+    setSelected(feed);
   };
 
   const closeModal = () => {
@@ -135,7 +143,7 @@ export default function FeedPage() {
                   <BodyCell >{(feed.updated_at) ?? '-'}</BodyCell>
 
                   <BodyCell sx={{ width: '5%' }}>
-                    <Button variant="outlined" size="small" onClick={openModal}>삭제</Button>
+                    <Button variant="outlined" size="small" onClick={(e) => openModal(e, feed)}>삭제</Button>
                   </BodyCell>
                 </TableRow>
               ))}
@@ -156,12 +164,16 @@ export default function FeedPage() {
 
       <SelectModal
         open={open}
-        title={'게시글을 삭제합니다.'}
-        content={'삭제하시겠습니까?'}
+        title={selected?.is_deleted ? '삭제된 게시글입니다.' : '게시글을 삭제합니다.'}
+        content={selected?.is_deleted ? '영구 삭제하시겠습니까?' : '삭제하시겠습니까?'}
         leftButtonName={'영구삭제'}
-        rightButtonName={'임시삭제'}
-        onClickLeftButton={onDelete}
-        onClickRightButton={onDelete}
+        rightButtonName={selected?.is_deleted ? '닫기' : '임시삭제'}
+        onClickLeftButton={() => onDelete({ isHardDelete: true })}
+        onClickRightButton={
+          selected?.is_deleted ?
+            closeModal :
+            () => onDelete({ isHardDelete: false })
+        }
         onClose={closeModal}
       />
     </Container >

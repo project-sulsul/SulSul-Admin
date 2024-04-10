@@ -1,8 +1,8 @@
 import sulApi from "./config";
 
-export async function getAllUserList() {
+export async function getAllUserList({ page, size }) {
   try {
-    const response = await sulApi.get('/admin/users');
+    const response = await sulApi.get(`/admin/users?page=${page}&size=${size}`);
     return response.data;
   } catch (e) {
     console.error(`유저 목록 에러 발생:: ${e}`);

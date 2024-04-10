@@ -18,6 +18,7 @@ import {
   Typography
 } from "@mui/material";
 import SelectModal from "../components/modal/SelectModal";
+import { dateTimeFormat } from "../utils/dateTimeFormat";
 
 export default function FeedPage() {
   const navigate = useNavigate();
@@ -138,10 +139,10 @@ export default function FeedPage() {
                   <BodyCell >{feed.title ?? '-'}</BodyCell>
                   <BodyCell >{feed.content ?? '-'}</BodyCell>
                   <BodyCell >{feed.user_id ?? '-'}</BodyCell>
-                  <BodyCell color={feed.is_reported ? '#cc0000' : 'green'}>{feed?.is_reported ? String(feed?.is_reported).toUpperCase() : '-'}</BodyCell>
-                  <BodyCell color={feed.is_deleted ? '#cc0000' : 'green'}>{feed?.is_deleted ? String(feed?.is_deleted).toUpperCase() : '-'}</BodyCell>
-                  <BodyCell >{(feed.created_at) ?? '-'}</BodyCell>
-                  <BodyCell >{(feed.updated_at) ?? '-'}</BodyCell>
+                  <BodyCell color={feed.is_reported ? '#cc0000' : 'green'}>{feed?.is_reported ? 'O' : '-'}</BodyCell>
+                  <BodyCell color={feed.is_deleted ? '#cc0000' : 'green'}>{feed?.is_deleted ? 'O' : '-'}</BodyCell>
+                  <BodyCell >{feed?.created_at ? dateTimeFormat(feed.created_at) : '-'}</BodyCell>
+                  <BodyCell >{feed?.updated_at ? dateTimeFormat(feed.updated_at) : '-'}</BodyCell>
 
                   <BodyCell sx={{ width: '5%' }}>
                     <Button variant="outlined" size="small" onClick={(e) => openModal(e, feed)}>삭제</Button>
@@ -186,6 +187,7 @@ function HeadCell({ children, width }) {
     <TableCell sx={{
       fontWeight: 'bold',
       width: width,
+      height: '59px',
       padding: 1,
       textAlign: 'center'
     }}

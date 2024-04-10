@@ -3,12 +3,10 @@ import { useEffect, useState } from "react";
 import { getAllUserList, updateUserStatus } from "../api/user";
 
 import {
-  Box,
   Button,
   ButtonGroup,
   Checkbox,
   Container,
-  Modal,
   Paper,
   Stack,
   Table,
@@ -22,6 +20,7 @@ import {
 } from "@mui/material";
 import { USER_STATUS } from "../constants";
 import CheckModal from "../components/modal/CheckModal";
+import { dateTimeFormat } from "../utils/dateTimeFormat";
 
 export default function UserPage() {
   const [userList, setUserList] = useState([]);
@@ -29,30 +28,18 @@ export default function UserPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [mode, setMode] = useState(null);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     getUserList();
-
-    // setUserList([
-    //   {
-    //     id: 1,
-    //     uid: 1,
-    //     nickname: 'user',
-    //     image: 'url',
-    //     status: 'active',
-    //     device_type: 'ios',
-    //     created_at: '2024-03-30 15:09:26',
-    //     updated_at: '2024-03-30 17:09:26',
-    //   }
-    // ]);
-  }, []);
+  }, [page, rowsPerPage]);
 
   function getUserList() {
-    getAllUserList()
+    getAllUserList({ page: page + 1, size: rowsPerPage })
       .then(res => {
-        console.log('getUserList', res);
-        // setUserList(res);
-
+        console.log('getUserList', res.content);
+        setUserList(res.content);
+        setTotal(res.total_count);
       })
       .catch(e => {
         console.error(e);
@@ -68,8 +55,24 @@ export default function UserPage() {
     setPage(0);
   };
 
-  const onSelectUser = (e) => {
-    setSelected(prev => [...prev, Number(e.target.value)]);
+  const onSelectUser = (userId) => {
+    const id = Number(userId);
+
+    if (selected.includes(id)) {
+      setSelected(prev => prev.filter(item => item !== id));
+      return;
+    }
+
+    setSelected(prev => [...prev, id]);
+  };
+
+  const onSelectAllUsers = () => {
+    if (selected.length === userList.length) {
+      setSelected([]);
+      return;
+    }
+
+    setSelected(userList.map(user => Number(user.id)));
   };
 
   const openModal = (status) => {
@@ -91,8 +94,10 @@ export default function UserPage() {
     updateUserStatus(params)
       .then(() => {
         getUserList();
+        closeModal();
       })
       .catch(e => {
+        alert('오류가 발생했습니다. 다시 시도해 주세요.');
         console.error(e);
       });
   };
@@ -116,36 +121,41 @@ export default function UserPage() {
       </Stack>
 
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ height: '40rem' }}>
+          <Table stickyHeader sx={{ tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>선택</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>id</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>uid</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>nickname</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>image</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>status</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>device type</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>created_at</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>updated_at</TableCell>
+                <HeadCell width={'7%'}>
+                  <Checkbox onClick={onSelectAllUsers} checked={selected.length === userList.length} />
+                </HeadCell>
+                <HeadCell width={'20%'}>이메일</HeadCell>
+                <HeadCell>닉네임</HeadCell>
+                <HeadCell width={'10%'}>상태</HeadCell>
+                <HeadCell width={'10%'}>기기</HeadCell>
+                <HeadCell width={'15%'}>생성일</HeadCell>
+                <HeadCell width={'15%'}>수정일</HeadCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
               {userList.map((user) => (
-                <TableRow key={user.uid}>
-                  <TableCell>
-                    <Checkbox value={user.uid} onClick={onSelectUser} />
-                  </TableCell>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.uid}</TableCell>
-                  <TableCell>{user.nickname}</TableCell>
-                  <TableCell>{user.image}</TableCell>
-                  <TableCell>{user.status}</TableCell>
-                  <TableCell>{user.device_type}</TableCell>
-                  <TableCell>{user.created_at}</TableCell>
-                  <TableCell>{user.updated_at}</TableCell>
+                <TableRow
+                  key={user.id}
+                  onClick={() => onSelectUser(user.id)}
+                  sx={{ cursor: 'pointer', width: '100%', ":hover": { backgroundColor: '#f2f3ff' } }}
+                >
+                  <BodyCell>
+                    <Checkbox
+                      checked={selected.includes(user.id)}
+                      onClick={() => onSelectUser(user.id)}
+                    />
+                  </BodyCell>
+                  <BodyCell>{user?.uid ?? '-'}</BodyCell>
+                  <BodyCell>{user?.nickname ?? '-'}</BodyCell>
+                  <BodyCell color={user?.status ? 'green' : 'black'}>{user?.status ? 'ACTIVE' : '-'}</BodyCell>
+                  <BodyCell>{user?.device_type ?? '-'}</BodyCell>
+                  <BodyCell>{user?.created_at ? dateTimeFormat(user.created_at) : '-'}</BodyCell>
+                  <BodyCell>{user?.updated_at ? dateTimeFormat(user.updated_at) : '-'}</BodyCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -155,7 +165,7 @@ export default function UserPage() {
         <TablePagination
           rowsPerPageOptions={[10, 30, 50]}
           component="div"
-          count={userList.length}
+          count={total}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={onChangePage}
@@ -176,3 +186,32 @@ export default function UserPage() {
   );
 }
 
+function HeadCell({ children, width }) {
+  return (
+    <TableCell sx={{
+      fontWeight: 'bold',
+      width: width,
+      padding: 1,
+      textAlign: 'center'
+    }}
+    >
+      {children}
+    </TableCell>
+  );
+}
+
+function BodyCell({ children, color }) {
+  return (
+    <TableCell
+      sx={{
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        color: color ?? '#000',
+        textAlign: 'center'
+      }}
+    >
+      {children}
+    </TableCell>
+  );
+}

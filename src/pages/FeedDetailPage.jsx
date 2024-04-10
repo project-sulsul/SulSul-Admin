@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { deleteFeed, getFeedById } from "../api/feed";
 import SelectModal from "../components/modal/SelectModal";
+import { dateTimeFormat } from "../utils/dateTimeFormat";
 
 export default function FeedDetailPage() {
   const navigate = useNavigate();
@@ -99,10 +100,10 @@ export default function FeedDetailPage() {
           <BodyGridItem xs={4}>{detailData?.user_id ?? '-'}</BodyGridItem>
 
           <HeadGridItem xs={2}>생성일</HeadGridItem>
-          <BodyGridItem xs={4}>{detailData?.created_at ?? '-'}</BodyGridItem>
+          <BodyGridItem xs={4}>{detailData?.created_at ? dateTimeFormat(detailData.created_at) : '-'}</BodyGridItem>
 
           <HeadGridItem xs={2}>수정일</HeadGridItem>
-          <BodyGridItem xs={4}>{detailData?.updated_at ?? '-'}</BodyGridItem>
+          <BodyGridItem xs={4}>{detailData?.updated_at ? dateTimeFormat(detailData.updated_at) : '-'}</BodyGridItem>
 
           <HeadGridItem xs={2}>술 취향</HeadGridItem>
           <BodyGridItem xs={4}>
@@ -120,12 +121,12 @@ export default function FeedDetailPage() {
 
           <HeadGridItem xs={2}>신고 여부</HeadGridItem>
           <BodyGridItem color={detailData?.is_reported ? '#cc0000' : 'green'} xs={4}>
-            {detailData?.is_reported ? 'TRUE' : 'FALSE'}
+            {detailData?.is_reported ? 'O' : 'X'}
           </BodyGridItem>
 
           <HeadGridItem xs={2}>삭제 여부</HeadGridItem>
           <BodyGridItem color={detailData?.is_deleted ? '#cc0000' : 'green'} xs={4}>
-            {detailData?.is_deleted ? 'TRUE' : 'FALSE'}
+            {detailData?.is_deleted ? 'O' : 'X'}
           </BodyGridItem>
         </Grid>
       </Paper>

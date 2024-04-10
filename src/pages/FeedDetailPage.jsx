@@ -3,8 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Badge,
+  Box,
   Button,
   Container,
+  Grid,
   Paper,
   Stack,
   Table,
@@ -69,68 +71,60 @@ export default function FeedDetailPage() {
       </Stack>
 
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <HeadCell>제목</HeadCell>
-                <BodyCell>{detailData?.title ?? '-'}</BodyCell>
+        <Grid container>
+          <HeadGridItem xs={2}>제목</HeadGridItem>
+          <BodyGridItem xs={4}>{detailData?.title ?? '-'}</BodyGridItem>
 
-                <HeadCell>피드 아이디</HeadCell>
-                <BodyCell>{detailData?.feed_id ?? '-'}</BodyCell>
-              </TableRow>
+          <HeadGridItem xs={2}>피드 아이디</HeadGridItem>
+          <BodyGridItem xs={4}>{detailData?.feed_id ?? '-'}</BodyGridItem>
 
-              <TableRow>
-                <HeadCell>내용</HeadCell>
-                <BodyCell span={3}>{detailData?.content ?? '-'}</BodyCell>
-              </TableRow>
+          <HeadGridItem xs={2}>내용</HeadGridItem>
+          <BodyGridItem xs={10}>{detailData?.content ?? '-'}</BodyGridItem>
 
-              <TableRow>
-                <HeadCell>유저 닉네임</HeadCell>
-                <BodyCell>{detailData?.user_nickname ?? '-'}</BodyCell>
+          <HeadGridItem xs={2}>이미지</HeadGridItem>
+          <BodyGridItem xs={10}>{
+            detailData?.images.length > 0 ?
+              detailData.images.map(img => <img src={img} alt="게시글 이미지" width={'170rem'} style={{ margin: '0 1rem 1rem 0' }} />)
+              : '-'
+          }
+          </BodyGridItem>
 
-                <HeadCell>유저 아이디</HeadCell>
-                <BodyCell>{detailData?.user_id ?? '-'}</BodyCell>
-              </TableRow>
+          <HeadGridItem xs={2}>유저 닉네임</HeadGridItem>
+          <BodyGridItem xs={4}>{detailData?.user_nickname ?? '-'}</BodyGridItem>
 
-              <TableRow>
-                <HeadCell>생성일</HeadCell>
-                <BodyCell>{detailData?.created_at ?? '-'}</BodyCell>
+          <HeadGridItem xs={2}>유저 아이디</HeadGridItem>
+          <BodyGridItem xs={4}>{detailData?.user_id ?? '-'}</BodyGridItem>
 
-                <HeadCell>수정일</HeadCell>
-                <BodyCell>{detailData?.updated_at ?? '-'}</BodyCell>
-              </TableRow>
+          <HeadGridItem xs={2}>생성일</HeadGridItem>
+          <BodyGridItem xs={4}>{detailData?.created_at ?? '-'}</BodyGridItem>
 
-              <TableRow>
-                <HeadCell>술 취향</HeadCell>
-                <BodyCell>
-                  {detailData?.alcohols ? detailData?.alcohols.map((alcohol, index) =>
-                    <PairBadge key={index}>{alcohol}</PairBadge>
-                  ) : '-'}
-                </BodyCell>
+          <HeadGridItem xs={2}>수정일</HeadGridItem>
+          <BodyGridItem xs={4}>{detailData?.updated_at ?? '-'}</BodyGridItem>
 
-                <HeadCell>안주 취향</HeadCell>
-                <BodyCell>
-                  {detailData?.foods ? detailData?.foods.map((food, index) =>
-                    <PairBadge key={index}>{food}</PairBadge>
-                  ) : '-'}
-                </BodyCell>
-              </TableRow>
+          <HeadGridItem xs={2}>술 취향</HeadGridItem>
+          <BodyGridItem xs={4}>
+            {detailData?.alcohols ? detailData?.alcohols.map((alcohol, index) =>
+              <PairBadge key={index}>{alcohol}</PairBadge>
+            ) : '-'}
+          </BodyGridItem>
 
-              <TableRow>
-                <HeadCell>신고 여부</HeadCell>
-                <BodyCell color={detailData?.is_reported ? '#cc0000' : 'green'}>
-                  {detailData?.is_reported ? String(detailData?.is_reported).toUpperCase() : '-'}
-                </BodyCell>
+          <HeadGridItem xs={2}>안주 취향</HeadGridItem>
+          <BodyGridItem xs={4}>
+            {detailData?.foods ? detailData?.foods.map((food, index) =>
+              <PairBadge key={index}>{food}</PairBadge>
+            ) : '-'}
+          </BodyGridItem>
 
-                <HeadCell>삭제 여부</HeadCell>
-                <BodyCell color={detailData?.is_deleted ? '#cc0000' : 'green'}>
-                  {detailData?.is_deleted ? String(detailData?.is_deleted).toUpperCase() : '-'}
-                </BodyCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+          <HeadGridItem xs={2}>신고 여부</HeadGridItem>
+          <BodyGridItem color={detailData?.is_reported ? '#cc0000' : 'green'} xs={4}>
+            {detailData?.is_reported ? 'TRUE' : 'FALSE'}
+          </BodyGridItem>
+
+          <HeadGridItem xs={2}>삭제 여부</HeadGridItem>
+          <BodyGridItem color={detailData?.is_deleted ? '#cc0000' : 'green'} xs={4}>
+            {detailData?.is_deleted ? String(detailData?.is_deleted).toUpperCase() : '-'}
+          </BodyGridItem>
+        </Grid>
       </Paper>
 
       <SelectModal
@@ -143,46 +137,50 @@ export default function FeedDetailPage() {
         onClickRightButton={onDelete}
         onClose={closeModal}
       />
-    </Container>
+    </Container >
   );
 }
 
-function HeadCell({ children }) {
+function HeadGridItem({ children, xs }) {
   return (
-    <TableCell
+    <Grid
+      item
+      xs={xs}
       sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         fontWeight: 'bold',
-        textAlign: 'center',
-        borderLeft: '1px solid rgba(224, 224, 224, 1)',
-        borderRight: '1px solid rgba(224, 224, 224, 1)',
+        borderBottom: '1px solid rgba(224, 224, 224, 1)',
         backgroundColor: 'rgba(224, 224, 224, 0.2)',
         width: '10rem',
-        height: '2.5rem',
+        minHeight: '2.5rem'
       }}
     >
       {children}
-    </TableCell>
+    </Grid>
   );
 }
 
-function BodyCell({ children, color, span }) {
+function BodyGridItem({ children, color, xs }) {
   return (
-    <TableCell
-      colSpan={span}
-      align="center"
+    <Grid
+      item
+      xs={xs}
       sx={{
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
+        padding: '1em',
         color: color ?? '#000',
-        height: '2.5rem',
+        minHeight: '4rem',
+        maxHeight: '18rem',
+        borderBottom: '1px solid rgba(224, 224, 224, 1)',
+        overflow: 'scroll',
       }}
     >
       {children}
-    </TableCell>
+    </Grid>
   );
 }
 

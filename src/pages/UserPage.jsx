@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getAllUserList, updateUserStatus } from "../api/user";
+import { getAllUserList, modifyNicknameById, updateUserStatus } from "../api/user";
 
 import {
   Button,
@@ -21,6 +21,7 @@ import {
 import { USER_STATUS } from "../constants";
 import CheckModal from "../components/modal/CheckModal";
 import { dateTimeFormat } from "../utils/dateTimeFormat";
+import ChangeNicknameModal from "../components/modal/ChangeNicknameModal";
 
 export default function UserPage({ setIsLoading }) {
   const [userList, setUserList] = useState([]);
@@ -29,6 +30,8 @@ export default function UserPage({ setIsLoading }) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [mode, setMode] = useState(null);
   const [total, setTotal] = useState(0);
+  const [isChangeNickname, setIsChangeNickname] = useState(false);
+  const [modifyUser, setModifyUser] = useState();
 
   useEffect(() => {
     getUserList();
@@ -38,7 +41,6 @@ export default function UserPage({ setIsLoading }) {
     setIsLoading(true);
     getAllUserList({ page: page + 1, size: rowsPerPage })
       .then(res => {
-        console.log('getUserList', res.content);
         setUserList(res.content);
         setTotal(res.total_count);
       })
@@ -106,6 +108,32 @@ export default function UserPage({ setIsLoading }) {
       .finally(() => setIsLoading(false));
   };
 
+  const openChangeNicknameModal = (e, user) => {
+    e.stopPropagation();
+    setModifyUser(user);
+    setIsChangeNickname(true);
+  };
+
+  const closeChangeNicknameModal = () => {
+    setIsChangeNickname(false);
+    setModifyUser(null);
+  };
+
+  const changeNickname = ({ id, nickname }) => {
+    setIsLoading(true);
+    modifyNicknameById({ id, nickname })
+      .then((res) => {
+        getUserList();
+        closeChangeNicknameModal();
+      })
+      .catch(e => {
+        alert('오류가 발생했습니다. 다시 시도해 주세요.');
+        console.error(e);
+      })
+      .finally(() => setIsLoading(false));
+
+  };
+
   return (
     <Container>
       <Stack
@@ -155,7 +183,15 @@ export default function UserPage({ setIsLoading }) {
                     />
                   </BodyCell>
                   <BodyCell>{user?.uid ?? '-'}</BodyCell>
-                  <BodyCell>{user?.nickname ?? '-'}</BodyCell>
+                  <BodyCell>
+                    <Button
+                      variant="outlined"
+                      sx={{ width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                      onClick={(e) => openChangeNicknameModal(e, user)}
+                    >
+                      {user?.nickname ?? '-'}
+                    </Button>
+                  </BodyCell>
                   <BodyCell color={user?.status ? 'green' : 'black'}>{user?.status ? 'ACTIVE' : '-'}</BodyCell>
                   <BodyCell>{user?.device_type ?? '-'}</BodyCell>
                   <BodyCell>{user?.created_at ? dateTimeFormat(user.created_at) : '-'}</BodyCell>
@@ -186,6 +222,12 @@ export default function UserPage({ setIsLoading }) {
         onClose={closeModal}
       />
 
+      <ChangeNicknameModal
+        open={isChangeNickname}
+        onClose={closeChangeNicknameModal}
+        onClick={changeNickname}
+        user={modifyUser}
+      />
     </Container>
   );
 }

@@ -23,10 +23,10 @@ export const getReport = async ({ reportId }) => {
 	}
 }
 
-// TODO : 마무리해야함
-export const updateReportStatus = async ({ reportId }) => { 
+
+export const updateReportStatusToSolved = async ({ reportId }) => { 
 	try {
-	  const response = await sulApi.put(`/admin/reports/${reportId}/status`);
+	  const response = await sulApi.put(`/admin/reports/${reportId}/status`, { status: 'SOLVED' });
 	  return response.data;
 	} catch (e) {
 	  console.error(`신고 상세 상태 변경 중 에러 발생:: ${e}`);

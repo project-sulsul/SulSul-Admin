@@ -6,6 +6,7 @@ import UserPage from './pages/UserPage';
 import ReportPage from './pages/ReportPage';
 import FeedPage from './pages/FeedPage';
 import FeedDetailPage from './pages/FeedDetailPage';
+import ReportDetailPage from './pages/ReportDetailPage';
 import { useState } from 'react';
 
 export default function App() {
@@ -17,7 +18,10 @@ export default function App() {
         <Route path='/' element={<LoginPage />} />
 
         <Route element={<Layout isLoading={isLoading} />}>
-          <Route path='/report' element={<ReportPage setIsLoading={setIsLoading} />} />
+          <Route path='/report'>
+            <Route index element={<ReportPage setIsLoading={setIsLoading} />} />
+            <Route path=':reportId' element={<ReportDetailPage setIsLoading={setIsLoading} />} />
+          </Route>
 
           <Route path='/user' element={<UserPage setIsLoading={setIsLoading} />} />
 

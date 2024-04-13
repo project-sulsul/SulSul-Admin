@@ -46,7 +46,7 @@ export default function FeedDetailPage({ setIsLoading }) {
     const onClickNavigateTargetDetailPage = () => { 
       const targetId = detailData?.target_id
       if (detailData?.type === 'feed' || detailData?.type === 'comment') {
-        getFeedById({ targetId })
+        getFeedById({ feedId: targetId })
         .then(() => {
           navigate(`/feed/${targetId}`);
         })

@@ -22,7 +22,7 @@ export async function updateUserStatus(params) {
 
 export async function modifyNicknameById({ id, nickname }) {
   try {
-    await sulApi.put(`/admin/users/${id}/nickname?nickname=${nickname}`);
+    await sulApi.put(`/admin/users/${id}/nickname`, { nickname });
     return;
   } catch (e) {
     console.error(`닉네임 변경(${id}) 에러 발생:: ${e}`);

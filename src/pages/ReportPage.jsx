@@ -39,6 +39,10 @@ export default function ReportPage({ setIsLoading }) {
     setPage(0);
   };
 
+  const onClickReport = (id) => {
+    navigate(`/report/${id}`);
+  };
+
   const setReportList = async () => {
     setIsLoading(true);
     getAllReports({ page: page + 1, size: rowsPerPage })
@@ -78,7 +82,7 @@ export default function ReportPage({ setIsLoading }) {
               {reports.map((report) => (
                 <TableRow
                   key={report.id}
-                  onClick={() => {}}
+                  onClick={() => onClickReport(report.id)}
                   sx={{ cursor: 'pointer', width: '100%', ":hover": { backgroundColor: '#f2f3ff' } }}
                 >
                   <BodyCell>{ report.id }</BodyCell>

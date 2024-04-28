@@ -60,6 +60,10 @@ export default function FeedDetailPage({ setIsLoading }) {
     const onClickUpdateStatus = () => {
       setIsLoading(true);
       updateReportStatusToSolved({ reportId })
+        .then(() => {
+          alert('신고가 처리되었습니다.');
+          navigate('/report');
+        })
         .catch((e) => {
           alert('오류가 발생하여 처리하지 못 했습니다.');
           console.error(e);
